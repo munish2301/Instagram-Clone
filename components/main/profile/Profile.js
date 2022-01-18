@@ -135,7 +135,10 @@ function Profile(props) {
     );
   }
   return (
-    <ScrollView style={[container.container, utils.backgroundWhite]}>
+    <ScrollView
+      style={[container.container, utils.backgroundWhite]}
+      horizontal={false}
+    >
       <View style={[container.profileInfo]}>
         <View style={[utils.noPadding, container.row]}>
           {user.image == "default" ? (
@@ -259,32 +262,36 @@ function Profile(props) {
       </View>
 
       <View style={[utils.borderTopGray]}>
-        <FlatList
-          numColumns={3}
-          horizontal={false}
-          data={userPosts}
-          style={{}}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[container.containerImage, utils.borderWhite]}
-              onPress={() => props.navigation.navigate("Post", { item, user })}
-            >
-              {item.type == 0 ? (
-                <CachedImage
-                  cacheKey={item.id}
-                  style={container.image}
-                  source={{ uri: item.downloadURLStill }}
-                />
-              ) : (
-                <CachedImage
-                  cacheKey={item.id}
-                  style={container.image}
-                  source={{ uri: item.downloadURL }}
-                />
-              )}
-            </TouchableOpacity>
-          )}
-        />
+        <ScrollView horizontal={true}>
+          <FlatList
+            numColumns={3}
+            horizontal={false}
+            data={userPosts}
+            style={{}}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={[container.containerImage, utils.borderWhite]}
+                onPress={() =>
+                  props.navigation.navigate("Post", { item, user })
+                }
+              >
+                {item.type == 0 ? (
+                  <CachedImage
+                    cacheKey={item.id}
+                    style={container.image}
+                    source={{ uri: item.downloadURLStill }}
+                  />
+                ) : (
+                  <CachedImage
+                    cacheKey={item.id}
+                    style={container.image}
+                    source={{ uri: item.downloadURL }}
+                  />
+                )}
+              </TouchableOpacity>
+            )}
+          />
+        </ScrollView>
       </View>
     </ScrollView>
   );
