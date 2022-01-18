@@ -19,11 +19,7 @@ import {
   doc,
   where,
   addDoc,
-  getDocs,
-  getDoc,
-  FieldValue,
-  orderBy,
-  onSnapshot,
+  serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -80,15 +76,15 @@ function Chat(props) {
       creator: auth.currentUser.uid,
       text: textToSend,
       post: post,
-      creation: FieldValue.serverTimestamp,
+      creation: serverTimestamp(),
     });
     await updateDoc(docRef, {
       lastMessage: "post sent",
-      lastMessageTimestamp: FieldValue.serverTimestamp,
+      lastMessageTimestamp: serverTimestamp(),
     });
     await updateDoc(docRef, {
       lastMessage: textToSend,
-      lastMessageTimestamp: FieldValue.serverTimestamp,
+      lastMessageTimestamp: serverTimestamp(),
       [item.users[0]]: false,
       [item.users[1]]: false,
     });

@@ -31,10 +31,10 @@ import {
   addDoc,
   getDocs,
   getDoc,
-  FieldValue,
   orderBy,
   onSnapshot,
   updateDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -116,7 +116,6 @@ function Chat(props) {
       const docRef = doc(chatsCollectionRef, chat.id);
       const messagesCollectionRef = collection(docRef, "messages");
       const q = query(messagesCollectionRef, orderBy("creation", "asc"));
-
       onSnapshot(q, (snapshot) => {
         let messages = snapshot.docs.map((doc) => {
           const data = doc.data();
@@ -140,7 +139,7 @@ function Chat(props) {
     await addDoc(chatsCollectionRef, {
       users: [auth.currentUser.uid, user.uid],
       lastMessage: "Send the first message",
-      lastMessageTimestamp: FieldValue.serverTimestamp,
+      lastMessageTimestamp: serverTimestamp(),
     });
     props.fetchUserChats();
   };
@@ -164,14 +163,14 @@ function Chat(props) {
       await addDoc(messagesCollectionRef, {
         creator: auth.currentUser.uid,
         text: textToSend,
-        creation: FieldValue.serverTimestamp,
+        creation: serverTimestamp(),
       });
     } catch (err) {
       console.log(err);
     }
     await updateDoc(docRef, {
       lastMessage: textToSend,
-      lastMessageTimestamp: FieldValue.serverTimestamp,
+      lastMessageTimestamp: serverTimestamp(),
       [chat.users[0]]: false,
       [chat.users[1]]: false,
     });

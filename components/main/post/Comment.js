@@ -19,18 +19,12 @@ import {
   getFirestore,
   collection,
   query,
-  limit,
+  serverTimestamp,
   doc,
-  where,
-  setDoc,
   addDoc,
   getDocs,
   getDoc,
-  deleteDoc,
-  FieldValue,
   orderBy,
-  onSnapshot,
-  updateDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -102,7 +96,7 @@ function Comment(props) {
     await addDoc(commentsCollectionRef, {
       creator: auth.currentUser.uid,
       text: textToSend,
-      creation: FieldValue.serverTimestamp,
+      creation: serverTimestamp(),
     });
     setRefresh(true);
 

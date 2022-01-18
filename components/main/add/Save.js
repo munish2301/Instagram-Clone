@@ -32,7 +32,7 @@ import {
   where,
   addDoc,
   getDocs,
-  FieldValue,
+  serverTimestamp,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -103,7 +103,7 @@ function Save(props) {
       likesCount: 0,
       commentsCount: 0,
       type: props.route.params.type,
-      creation: FieldValue.serverTimestamp,
+      creation: serverTimestamp(),
     };
     if (downloadURLStill != null) {
       object.downloadURLStill = downloadURLStill;
