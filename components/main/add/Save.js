@@ -15,7 +15,12 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { fetchUserPosts, sendNotification } from "../../../redux/actions/index";
 import { container, navbar, text, utils } from "../../styles";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "../../../firebaseConfig";
 import {
@@ -86,7 +91,7 @@ function Save(props) {
     const storageRef = ref(storage, path);
     const response = await fetch(image);
     const blob = await response.blob();
-    const task = uploadBytes(storageRef, blob);
+    const task = uploadBytesResumable(storageRef, blob);
     const downloadURL = await getDownloadURL(task.snapshot.ref);
     return downloadURL;
   };

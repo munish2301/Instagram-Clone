@@ -11,8 +11,8 @@ import {
   View,
 } from "react-native";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { updateUserFeedPosts } from "../../../redux/actions/index";
+// import { bindActionCreators } from "redux";
+// import { updateUserFeedPosts } from "../../../redux/actions/index";
 import { container, form, navbar, text, utils } from "../../styles";
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "../../../firebaseConfig";
@@ -92,7 +92,6 @@ function Edit(props) {
       const blob = await response.blob();
 
       const task = uploadBytesResumable(storageRef, blob);
-      console.log("here");
       const taskProgress = (snapshot) => {
         console.log(`transferred: ${snapshot.bytesTransferred}`);
       };
@@ -101,15 +100,12 @@ function Edit(props) {
         getDownloadURL(task.snapshot.ref).then(async (snapshot) => {
           const usersCollectionRef = collection(db, "users");
           const docRef = doc(usersCollectionRef, auth.currentUser.uid);
-          console.log("here1");
           await updateDoc(docRef, {
             name,
             description,
             image: snapshot,
           });
-          console.log("here2");
-          props.updateUserFeedPosts();
-          console.log("here3");
+          //  props.updateUserFeedPosts();
           props.navigation.goBack();
         });
       };
@@ -131,7 +127,7 @@ function Edit(props) {
     const usersCollectionRef = collection(db, "users");
     const docRef = doc(usersCollectionRef, auth.currentUser.uid);
     await updateDoc(docRef, data);
-    props.updateUserFeedPosts();
+    // props.updateUserFeedPosts();
     props.navigation.goBack();
   };
 
@@ -183,7 +179,7 @@ const mapStateToProps = (store) => ({
   currentUser: store.userState.currentUser,
 });
 
-const mapDispatchProps = (dispatch) =>
-  bindActionCreators({ updateUserFeedPosts }, dispatch);
+// const mapDispatchProps = (dispatch) =>
+//   bindActionCreators({ updateUserFeedPosts }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchProps)(Edit);
+export default connect(mapStateToProps, null)(Edit);
