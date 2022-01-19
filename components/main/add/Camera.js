@@ -31,7 +31,7 @@ export default function VideoScreen(props) {
   const [isFlash, setIsFlash] = useState(false);
   const [isVideoRecording, setIsVideoRecording] = useState(false);
   const [type, setType] = useState(0);
-  const [showGallery, setShowGallery] = useState(true);
+  const [showGallery, setShowGallery] = useState(false);
   const [galleryItems, setGalleryItems] = useState([]);
   const [galleryScrollRef, setGalleryScrollRef] = useState(null);
   const [galleryPickedImage, setGalleryPickedImage] = useState(null);
@@ -48,12 +48,12 @@ export default function VideoScreen(props) {
         audioPermissions.status === "granted" &&
         galleryPermissions.status === "granted"
       ) {
-        const getPhotos = await MediaLibrary.getAssetsAsync({
-          sortBy: ["creationTime"],
-          mediaType: ["photo", "video"],
-        });
-        setGalleryItems(getPhotos);
-        setGalleryPickedImage(getPhotos.assets[0]);
+        // const getPhotos = await MediaLibrary.getAssetsAsync({
+        //   sortBy: ["creationTime"],
+        //   mediaType: ["photo", "video"],
+        // });
+        // setGalleryItems(getPhotos);
+        // setGalleryPickedImage(getPhotos.assets[0]);
         setHasPermission(true);
       }
     })();
@@ -198,7 +198,7 @@ export default function VideoScreen(props) {
             color="black"
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setShowGallery(true)}>
+        <TouchableOpacity onPress={() => {}}>
           <Feather
             style={utils.margin15}
             name={"image"}

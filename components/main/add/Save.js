@@ -70,36 +70,67 @@ function Save(props) {
     }
     setUploading(true);
     let downloadURLStill = null;
-    let downloadURL = await SaveStorage(
-      props.route.params.source,
-      `post/${auth.currentUser.uid}/${Math.random().toString(36)}`
-    );
-
-    if (props.route.params.imageSource != null) {
-      downloadURLStill = await SaveStorage(
-        props.route.params.imageSource,
-        `post/${auth.currentUser.uid}/${Math.random().toString(36)}`
-      );
+    let downloadURL = null;
+    if (props.route.params.source == "default") {
+      downloadURL = "";
     }
-    savePostData(downloadURL, downloadURLStill);
-  };
-
-  const SaveStorage = async (image, path) => {
-    if (image == "default") {
-      return "";
-    }
+    const path = `post/${auth.currentUser.uid}/${Math.random().toString(36)}`;
+    const image = props.route.params.source;
     const storageRef = ref(storage, path);
     const response = await fetch(image);
     const blob = await response.blob();
     const task = uploadBytesResumable(storageRef, blob);
-    const downloadURL = await getDownloadURL(task.snapshot.ref);
-    return downloadURL;
+    const taskProgress = (snapshot) => {
+      console.log(`transferred: ${snapshot.bytesTransferred}`);
+    };
+
+    const taskCompleted = async () => {
+      getDownloadURL(task.snapshot.ref).then(async (url) => {
+        downloadURL = url;
+        if (props.route.params.imageSource == null) {
+          savePostData(downloadURL, downloadURLStill);
+        } else {
+          const image2 = props.route.params.imageSource;
+          const path2 = `post/${auth.currentUser.uid}/${Math.random().toString(
+            36
+          )}`;
+          const storageRef2 = ref(storage, path2);
+          const response2 = await fetch(image2);
+          const blob2 = await response2.blob();
+          const task2 = uploadBytesResumable(storageRef2, blob2);
+
+          const taskProgress2 = (snapshot) => {
+            console.log(`transferred: ${snapshot.bytesTransferred}`);
+          };
+
+          const taskCompleted2 = async () => {
+            getDownloadURL(task2.snapshot.ref).then((url) => {
+              downloadURLStill = url;
+              savePostData(downloadURL, downloadURLStill);
+            });
+          };
+
+          const taskError2 = (snapshot) => {
+            console.log(snapshot);
+          };
+
+          task2.on("state_changed", taskProgress2, taskError2, taskCompleted2);
+          savePostData(downloadURL, downloadURLStill);
+        }
+      });
+    };
+
+    const taskError = (snapshot) => {
+      console.log(snapshot);
+    };
+
+    task.on("state_changed", taskProgress, taskError, taskCompleted);
   };
 
   const savePostData = async (downloadURL, downloadURLStill) => {
     let object = {
-      downloadURL,
-      caption,
+      downloadURL: downloadURL,
+      caption: caption,
       likesCount: 0,
       commentsCount: 0,
       type: props.route.params.type,
