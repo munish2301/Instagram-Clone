@@ -82,7 +82,7 @@ function Profile(props) {
     } else {
       setFollowing(false);
     }
-  });
+  }, []);
 
   const onFollow = async () => {
     const followingCollectionRef = collection(db, "following");
