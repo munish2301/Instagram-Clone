@@ -31,7 +31,7 @@ import {
   getDocs,
   getDoc,
   deleteDoc,
-  FieldValue,
+  increment,
   orderBy,
   onSnapshot,
   updateDoc,
@@ -141,6 +141,9 @@ function Post(props) {
     const likesCollectionRef = collection(postDocRef, "likes");
     const authUserDocRef = doc(likesCollectionRef, auth.currentUser.uid);
     await setDoc(authUserDocRef, {});
+    await updateDoc(postDocRef, {
+      likesCount: increment(1),
+    });
     props.sendNotification(
       user.notificationToken,
       "New Like",
@@ -158,6 +161,9 @@ function Post(props) {
     const likesCollectionRef = collection(postDocRef, "likes");
     const authUserDocRef = doc(likesCollectionRef, auth.currentUser.uid);
     await deleteDoc(authUserDocRef);
+    await updateDoc(postDocRef, {
+      likesCount: increment(-1),
+    });
   };
   if (!exists && loaded) {
     return (
